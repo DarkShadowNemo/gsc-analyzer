@@ -14,6 +14,7 @@ tree.pack()
 objects=[]
 pads=[]
 vertices=[]
+faces=[]
 
 def gamescene_dialog():
     global filepath
@@ -68,20 +69,37 @@ def gamescene_dialog():
                 f.seek(2,1)
                 vertexCount = unpack("B", f.read(1))[0]
                 flag1 = unpack("B", f.read(1))[0]
+                fa=-1
+                fb=0
+                fc=1
                 for i in range(vertexCount):
                     vx = unpack("<f", f.read(4))[0]
                     vy = unpack("<f", f.read(4))[0]
                     vz = unpack("<f", f.read(4))[0]
                     vw = unpack("<f", f.read(4))[0]
-                    vertices.append([vx,vz,vy,1])
+                    vertices.append([vx,vz,vy,1])  
                 datas = tree.insert(offset_data, 5, text=hex(Chunks))
                 tree.insert(datas, 6, text=vertexCount)
-                triangleStrips_ = tree.insert(datas, 7, text=flag1)
+                triangleStrips_ = tree.insert(datas, 7, text=hex(flag1))
                 for i, v in enumerate(vertices,1):
                     tree.insert(triangleStrips_, 8, text="vx %f" % v[0])
                     tree.insert(triangleStrips_, 9, text="vz %f" % v[1])
                     tree.insert(triangleStrips_, 10,text="vy %f" % v[2])
                     tree.insert(triangleStrips_, 11,text="vw %f" % 1.0)
+                for i in range(vertexCount-2):
+                    fa+=1
+                    fb+=1
+                    fc+=1
+                    faces.append([fa,fb,fc])
+                if PrimType == 6:
+                    
+                    triangleStrips__ = tree.insert("", 8, text="triangle strips")
+                    for i, fabc in enumerate(faces,1):
+                        tree.insert(triangleStrips__, 9, text="fa %d" % fabc[0])
+                        tree.insert(triangleStrips__, 10,text="fb %d" % fabc[1])
+                        tree.insert(triangleStrips__, 11,text="fc %d" % fabc[2])
+                        
+                    
                 
                 
                     
